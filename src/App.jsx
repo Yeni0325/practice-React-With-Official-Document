@@ -10,11 +10,11 @@
  * 관례상 이벤트 핸들러 props은 on으로 시작하고 그 뒤에 대문자가 와야함!
  */
 
-// << 1️⃣ Adding Interactivity >>
+// << 1️⃣ Adding Interactivity : 상호작용 추가하기 >>
 
 // -------------------------------------------------------------------------------
 
-// < 1-1.A Component's Memoory >
+// < 1-1.A Component's Memoory : 컴포넌트의 메모리 >
 
 /*
   - 컴포넌트가 렌더링 사이에 일부 정보를 기억해야할 때 state를 사용
@@ -82,7 +82,7 @@
 
 // -------------------------------------------------------------------------------
 
-// < 1-2. Render and Commit >
+// < 1-2. Render and Commit : 렌더링하고 커밋하기 >
 
 /*
   렌더링 시 React는 변경된 부분만 재렌더링 한다!
@@ -112,7 +112,7 @@
 
 // import { useState } from "react";
 
-// < 1-3. State as a Snapshot >
+// < 1-3. State as a Snapshot : 스냅샷으로서의 state >
 /*
   렌더링이란 ?
   : React가 컴포넌트, 즉 함수를 호출한다는 뜻!
@@ -155,8 +155,8 @@
 // }
 
 // -------------------------------------------------------------------------------
-import { useState } from "react"
-// < 1-4. Queueing a Series of State Updates >
+// import { useState } from "react"
+// < 1-4. Queueing a Series of State Updates : 여러 state 업데이트를 큐에 담기 >
 /*
   React는 state를 업데이트 하기 전에 이벤트 핸들러의 모든 코드가 실행될 때 까지 기다림!
 
@@ -188,21 +188,164 @@ import { useState } from "react"
 
   정리하자면, 이벤트 핸들러가 완료되면 React는 리렌더링을 실행. 리렌더링을 하는 동안 React는 큐를 처리한다!
 */
+// export default function Counter(){
+//   const [score, setScore] = useState(0);
 
-export default function Counter(){
-  const [score, setScore] = useState(0);
+//   // const increment = () => setScore(current => current + 1);
+//   function increment() {
+//     setScore(s => s + 1);
+//   }
+//   return(
+//     <>
+//       <h1>{number}</h1>
+//       <button onClick={() => {
+//         setNumber(number + 5);
+//         setNumber(n => n + 1);
+//       }}>Increase the number</button>
+//     </>
+//   );
+// }
 
-  // const increment = () => setScore(current => current + 1);
-  function increment() {
-    setScore(s => s + 1);
+// -------------------------------------------------------------------------------
+
+// < 1-5. Updating Objects in State : 객체 state 업데이트 > 
+/*
+  state는 객체를 포함한 모든 종류의 JS 값을 보유할 수 있다. 그러나 state에 있는 객체와 배열을 직접 변경해서는 안된다.
+  =>> 대신 객체와 배열을 업데이트하려면 새 객체를 생성하거나 기존 객체의 복사본을 만든 다음 해당 복사본을 사용하도록 state를 업데이트 해야한다!!
+
+  * ... 전개 구문은 “얕은” 구문으로, 한 단계 깊이만 복사한다.
+  setPerson({
+    ...person,                // 이전 필드를 복사
+    firstName: e.target.value // 단, first name만 덮어씌움
+  });
+
+  * state 가 깊게 중첩된 경우 Immer를 사용할 수 있음!
+
+*/
+// import { useState } from "react";
+
+// export default function Form() {
+// const [person, setPerson] = useState({
+//   name: 'Niki de Saint Phalle',
+//   artwork: {
+//     title: 'Blue Nana',
+//     city: 'Hamburg',
+//     image: 'https://i.imgur.com/Sd1AgUOm.jpg',
+//   }
+// });
+
+//   function handleChange(e) {
+//     console.log(e);
+//     console.log(e.target.name);
+//     console.log(e.target.value);
+//     setPerson({
+//       ...person,
+//       [e.target.name]: e.target.value
+//     });
+//     console.log(person);
+//   }
+
+//   return (
+//     <>
+//       <label>
+//         First name:
+//         <input
+//           name="firstName"
+//           value={person.firstName}
+//           onChange={handleChange}
+//         />
+//       </label>
+//       <label>
+//         Last name:
+//         <input
+//           name="lastName"
+//           value={person.lastName}
+//           onChange={handleChange}
+//         />
+//       </label>
+//       <label>
+//         Email:
+//         <input
+//           name="email"
+//           value={person.email}
+//           onChange={handleChange}
+//         />
+//       </label>
+//       <p>
+//         {person.firstName}{' '}
+//         {person.lastName}{' '}
+//         ({person.email})
+//       </p>
+//     </>
+//   );
+// }
+
+// -------------------------------------------------------------------------------
+
+// < 1-6. Updating arrays in state : 배열 state 업데이트 > 
+/*
+  * 객체와 마찬가지로 state에 저장된 배열을 업데이트하려면 새 배열을 생성하거나 기존 배열의 복사본을 만든 다음 새 배열을 사용해야한다!
+
+  * 객체와 마찬가지로 배열 복사가 지루하다면 Immer 라이브러리 사용이 가능하다!
+
+  * 배열 전개 구문 [...arr, newItem]을 사용하여 새 항목으로 배열을 만들 수 있다.
+
+  * filter() 및 map()을 사용하여 필터링되거나 변형된 항목으로 새 배열을 만들 수 있다.
+*/
+import { useState } from 'react';
+
+const initialList = [
+  { id: 0, title: 'Big Bellies', seen: false },
+  { id: 1, title: 'Lunar Landscape', seen: false },
+  { id: 2, title: 'Terracotta Army', seen: true },
+];
+
+export default function BucketList() {
+  const [list, setList] = useState(
+    initialList // [{}, {}, {}]
+  );
+
+  function handleToggle(artworkId, nextSeen) {
+    setList(list.map(artwork => {
+      if (artwork.id === artworkId) {
+        return { ...artwork, seen: nextSeen };
+      } else {
+        return artwork;
+      }
+    }));
   }
-  return(
+
+  return (
     <>
-      <h1>{number}</h1>
-      <button onClick={() => {
-        setNumber(number + 5);
-        setNumber(n => n + 1);
-      }}>Increase the number</button>
+      <h1>Art Bucket List</h1>
+      <h2>My list of art to see:</h2>
+      <ItemList
+        artworks={list}
+        onToggle={handleToggle} />
     </>
+  );
+}
+
+function ItemList({ artworks, onToggle }) {
+  return (
+    <ul>
+      {artworks.map(artwork => (
+        <li key={artwork.id}>
+          <label>
+            <input
+              type="checkbox"
+              checked={artwork.seen}
+              onChange={e => {
+                onToggle(
+                  artwork.id,
+                  e.target.checked
+                );
+              }}
+            />
+            {artwork.title}
+          </label>
+        </li>
+      ))}
+    </ul>
   );
 }
