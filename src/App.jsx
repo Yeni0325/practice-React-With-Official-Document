@@ -110,7 +110,7 @@
 
 // -------------------------------------------------------------------------------
 
-import { useState } from "react";
+// import { useState } from "react";
 
 // < 1-3. State as a Snapshot >
 /*
@@ -121,36 +121,88 @@ import { useState } from "react";
   - state는 함수가 반환된 후 사라지는 일반 변수와 다르다.
   - React에서 setState나 useState의 업데이트 함수를 호출했을 때, 상태 변경은 비동기적으로 이루어진다.
     => 즉, setState 함수를 호출한 직후 state가 바로 반영되지 않고 컴포넌트가 재렌더링되는 시점에 반영된다!
-
 */
-export default function Form() {
-  const [to, setTo] = useState('Alice');
-  const [message, setMessage] = useState('Hello');
+// export default function Form() {
+//   const [to, setTo] = useState('Alice');
+//   const [message, setMessage] = useState('Hello');
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    setTimeout(() => {
-      alert(`You said ${message} to ${to}`);
-    }, 5000);
+//   function handleSubmit(e) {
+//     e.preventDefault();
+//     setTimeout(() => {
+//       alert(`You said ${message} to ${to}`);
+//     }, 5000);
+//   }
+
+//   return (
+//     <form onSubmit={handleSubmit}>
+//       <label>
+//         To:{' '}
+//         <select
+//           value={to}
+//           onChange={e => setTo(e.target.value)}>
+//           <option value="Alice">Alice</option>
+//           <option value="Bob">Bob</option>
+//         </select>
+//       </label>
+//       <textarea
+//         placeholder="Message"
+//         value={message}
+//         onChange={e => setMessage(e.target.value)}
+//       />
+//       <button type="submit">Send</button>
+//     </form>
+//   );
+// }
+
+// -------------------------------------------------------------------------------
+import { useState } from "react"
+// < 1-4. Queueing a Series of State Updates >
+/*
+  React는 state를 업데이트 하기 전에 이벤트 핸들러의 모든 코드가 실행될 때 까지 기다림!
+
+  * 업데이트 함수 : setScore(current => current + 1)
+    - React는 이벤트 핸들러의 모든 코드가 모두 실행된 후에 이 함수가 처리되도록 큐에 넣음
+    - 다음 렌더링 중에 React는 큐를 순회하여 최종 업데이트 된 state를 제공!
+    - 업데이트 함수의 명명규칙
+      1. 해당 state 변수의 첫 글자 ex) setEnabled(e => !e) / setLastName(ln => ln.reverse())
+      2. 자세한 코드               ex) setEnabled(enabled => !enabled)
+      3. 접두사 사용               ex) setEnabled(prevEnabled => !prevEnabled)
+
+
+  * <button onClick={() => {
+    setNumber(number + 5);
+    setNumber(n => n + 1);
+  }}>Increase the number</button>
+  - 1. setNumber(number + 5) : number는 0이므로 setNumber(0 + 5) => React는 큐에 5로 바꾸기를 추가함
+  - 2. setNumber(n => n + 1) : n => n + 1 은 업데이트 함수       => React는 해당 함수를 큐에 추가함
+
+  * <button onClick={() => {
+    setNumber(number + 5);
+    setNumber(n => n + 1);
+    setNumber(42);
+  }}>Increase the number</button>
+  - 1. setNumber(number + 5) : number는 0이므로 setNumber(0 + 5) => React는 큐에 5로 바꾸기를 추가함
+  - 2. setNumber(n => n + 1) : n => n + 1 은 업데이트 함수       => React는 해당 함수를 큐에 추가함
+  - 3. setNumber(42);                                            => React는 42로 바꾸기를 큐에 추가함
+
+
+  정리하자면, 이벤트 핸들러가 완료되면 React는 리렌더링을 실행. 리렌더링을 하는 동안 React는 큐를 처리한다!
+*/
+
+export default function Counter(){
+  const [score, setScore] = useState(0);
+
+  // const increment = () => setScore(current => current + 1);
+  function increment() {
+    setScore(s => s + 1);
   }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        To:{' '}
-        <select
-          value={to}
-          onChange={e => setTo(e.target.value)}>
-          <option value="Alice">Alice</option>
-          <option value="Bob">Bob</option>
-        </select>
-      </label>
-      <textarea
-        placeholder="Message"
-        value={message}
-        onChange={e => setMessage(e.target.value)}
-      />
-      <button type="submit">Send</button>
-    </form>
+  return(
+    <>
+      <h1>{number}</h1>
+      <button onClick={() => {
+        setNumber(number + 5);
+        setNumber(n => n + 1);
+      }}>Increase the number</button>
+    </>
   );
 }
