@@ -1,5 +1,5 @@
 import { useState } from "react"
-import "../index.css";
+import "./App.css";
 
 // << 2️⃣ Managing State : state 관리 >>
 
@@ -100,40 +100,82 @@ import "../index.css";
 
   state를 최대한 단순하게 만들되, 그보다 더 단순해서는 안 된다!
 */
-export default function Form(){
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  // const [fullName, setFullName]= useState(''); // 불필요한 state 피하기
-  const fullName = firstName + ' ' + lastName;
+// export default function Form(){
+//   const [firstName, setFirstName] = useState('');
+//   const [lastName, setLastName] = useState('');
+//   // const [fullName, setFullName]= useState(''); // 불필요한 state 피하기
+//   const fullName = firstName + ' ' + lastName;
 
-  const handleFirstNameChange = (e) => {
-    setFirstName(e.target.value);
-  }
+//   const handleFirstNameChange = (e) => {
+//     setFirstName(e.target.value);
+//   }
 
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
-  }
+//   const handleLastNameChange = (e) => {
+//     setLastName(e.target.value);
+//   }
 
+//   return(
+//     <>
+//       <h2>Let's check you in</h2>
+//       <label>
+//         First Name : {' '}
+//         <input 
+//           value={firstName}
+//           onChange={handleFirstNameChange}
+//         />
+//       </label>
+//       <label>
+//         Last Name : {' '}
+//         <input
+//           value={lastName}
+//           onChange={handleLastNameChange}
+//         />
+//       </label>
+//       <p>
+//         Your ticket will be issued to : <b>{fullName}</b>
+//       </p>
+//     </>
+//   );
+// }
+
+// -------------------------------------------------------------------------------
+
+// < 2-3. Sharing state between components : 컴포넌트 간의 state 공유 >
+/*
+  때로는 두 컴포넌트의 state가 항상 함께 변경되기를 원할 때가 있다. 
+  이렇게 하려면 두 컴포넌트에서 state를 제거하고 가장 가까운 공통 부모로 이동한 다음 프로퍼티를 통해 전달하면 된다. 
+  이를 “state 올리기”라고 하며, React 코드를 작성할 때 가장 흔히 하는 작업 중 하나다.
+
+  아래 예제에서는 한 번에 하나의 패널만 활성화된다.
+*/
+export default function Accordion(){
+  const [activeIndex, setActiceIndex] = useState(0);
   return(
     <>
-      <h2>Let's check you in</h2>
-      <label>
-        First Name : {' '}
-        <input 
-          value={firstName}
-          onChange={handleFirstNameChange}
-        />
-      </label>
-      <label>
-        Last Name : {' '}
-        <input
-          value={lastName}
-          onChange={handleLastNameChange}
-        />
-      </label>
-      <p>
-        Your ticket will be issued to : <b>{fullName}</b>
-      </p>
+      <h2>Almaty, Kazakhstan</h2>
+      <Panel
+        title = "About"
+        isActive = {activeIndex === 0}
+        onShow = {() => setActiceIndex(0)}
+      >
+        With a population of about 2 million, Almaty is kazahstan's largest city. From 1929 to 1997, it was its capital city.
+      </Panel>
+      <Panel
+        title = "Etymology"
+        isActive = {activeIndex === 1}
+        onShow = {() => setActiceIndex(1)}
+      >
+        The name comes from <span lang="kk-KZ">алма</span>, the Kazakh word for "apple" and is often translated as "full of apples". In fact, the region surrounding Almaty is thought to be the ancestral home of the apple, and the wild <i lang="la">Malus sieversii</i> is considered a likely candidate for the ancestor of the modern domestic apple.
+      </Panel>
     </>
+  );
+}
+
+function Panel({title, children, isActive, onShow}){
+  return(
+    <section className="panel">
+      <h3>{title}</h3>
+      {isActive ? (<p>{children}</p>) : (<button onClick={onShow}>show</button>)}
+    </section>
   );
 }
