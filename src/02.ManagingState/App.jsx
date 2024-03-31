@@ -222,12 +222,12 @@ import "./App.css";
 // ];
 
 // -------------------------------------------------------------------------------
-import { useReducer } from "react"; 
-import AddTask from "./AddTask";
-import TaskList from "./TaskList";
-import tasksReducer from "./taskReducer";
+// import { useReducer } from "react"; 
+// import AddTask from "./AddTask";
+// import TaskList from "./TaskList";
+// import tasksReducer from "./taskReducer";
 
-// < 2-4. Extracting state logic into a reducer : state 로직을 reducer로 추출하기   >
+// < 2-5. Extracting state logic into a reducer : state 로직을 reducer로 추출하기>
 /*
   컴포넌트가 커질수록 여기저기 흩어져 있는 state 로직의 양도 늘어난다.
   복잡성을 줄이고 모든 로직을 접근하기 쉽게 한 곳에 모으려면, state 로직을 컴포넌트 외부의 reducer라고 하는 단일 함수로 옮길 수 있다.
@@ -282,53 +282,97 @@ import tasksReducer from "./taskReducer";
   
   Immer를 사용하여 간결한 reducer 작성할 수 있다.
 */
-export default function TaskApp(){
-  const [tasks, dispatch] = useReducer(
-    tasksReducer ,
-    initialTasks
-  );
+// export default function TaskApp(){
+//   const [tasks, dispatch] = useReducer(
+//     tasksReducer ,
+//     initialTasks
+//   );
 
-  function handleAddTask(text){
-    dispatch({
-      type : 'added' ,
-      id : nextId++ ,
-      text : text ,
-    });
-  }
+//   function handleAddTask(text){
+//     dispatch({
+//       type : 'added' ,
+//       id : nextId++ ,
+//       text : text ,
+//     });
+//   }
 
-  function handleChangeTask(task){
-    dispatch({
-      type : 'changed' ,
-      task : task ,
-    });
-  }
+//   function handleChangeTask(task){
+//     dispatch({
+//       type : 'changed' ,
+//       task : task ,
+//     });
+//   }
 
-  function handleDeleteTask(taskId){
-    dispatch({
-      type : 'deleted' ,
-      id : taskId ,
-    });
-  }
+//   function handleDeleteTask(taskId){
+//     dispatch({
+//       type : 'deleted' ,
+//       id : taskId ,
+//     });
+//   }
 
+//   return(
+//     <>
+//       <h1>Prague itinerary</h1>
+//       <AddTask 
+//         onAddTask={handleAddTask}
+//       />
+//       <TaskList 
+//         tasks={tasks}
+//         onChangeTask={handleChangeTask}
+//         onDeleteTask={handleDeleteTask}
+//       />
+//     </>
+//   );
+// }
+
+// let nextId = 3;
+// const initialTasks = [
+//   { id: 0, text: 'Visit Kafka Museum', done: true },
+//   { id: 1, text: 'Watch a puppet show', done: false },
+//   { id: 2, text: 'Lennon Wall pic', done: false }
+// ];
+
+// -------------------------------------------------------------------------------
+import Heading from "./Heading.jsx";
+import Section from "./Section.jsx";
+
+// < 2-6. Passing data deeply with context : context로 데이터 깊숙이 전달하기>
+/*
+  일반적으로 부모 컴포넌트에서 자식 컴포넌트로 정보를 전달할 때는 props를 통해 전달한다. 
+  하지만 일부 prop을 여러 컴포넌트에 전달해야 하거나 여러 컴포넌트에 동일한 정보가 필요한 경우 props 전달이 불편해질 수 있다.
+  
+  context를 사용하면 부모 컴포넌트가 prop을 통해 명시적으로 전달하지 않고도 그 아래 트리의 모든 컴포넌트에서 일부 정보를 사용할 수 있다(아무리 깊어도).
+
+  * context를 전달하려면
+    1. export const MyContext = createContext(defaultValue)를 사용하여 context를 생성하고 내보낸다.
+    2. useContext(MyContext) 훅에 전달하여 깊이에 상관없이 모든 하위 컴포넌트에서 읽을 수 있도록 한다.
+    3. 자식 컴포넌트를 <MyContext.Provider value={...}>로 감싸서 부모로부터 제공받는다.
+
+  context가 이렇게 좋은데 그럼 굳이 왜 props를 사용할까?
+    : context는 꼭 필요할 때만 사용한다. context를 사용하면 컴포넌트를 재사용하기 어려워질 수 있다. 
+      context의 주된 목적인 다양한 레벨이 있는 많은 컴포넌트들에게 전역적인 데이터를 전달하기 위함이다. 
+
+  따라서 context를 사용하기 전에 props를 전달하거나 JSX를 children으로 전달해보자.
+*/
+export default function Page(){
   return(
-    <>
-      <h1>Prague itinerary</h1>
-      <AddTask 
-        onAddTask={handleAddTask}
-      />
-      <TaskList 
-        tasks={tasks}
-        onChangeTask={handleChangeTask}
-        onDeleteTask={handleDeleteTask}
-      />
-    </>
+    <Section>
+      <Heading>Title</Heading>
+      <Section>
+        <Heading>Heading</Heading>
+        <Heading>Heading</Heading>
+        <Heading>Heading</Heading>
+        <Section> 
+          <Heading>Sub-heading</Heading>
+          <Heading>Sub-heading</Heading>
+          <Heading>Sub-heading</Heading>
+          <Section>
+            <Heading>Sub-sub-heading</Heading>
+            <Heading>Sub-sub-heading</Heading>
+            <Heading>Sub-sub-heading</Heading>
+          </Section>
+        </Section>
+      </Section>
+    </Section>
   );
 }
-
-let nextId = 3;
-const initialTasks = [
-  { id: 0, text: 'Visit Kafka Museum', done: true },
-  { id: 1, text: 'Watch a puppet show', done: false },
-  { id: 2, text: 'Lennon Wall pic', done: false }
-];
-
