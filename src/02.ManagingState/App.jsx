@@ -333,8 +333,8 @@ import "./App.css";
 // ];
 
 // -------------------------------------------------------------------------------
-import Heading from "./Heading.jsx";
-import Section from "./Section.jsx";
+// import Heading from "./Heading.jsx";
+// import Section from "./Section.jsx";
 
 // < 2-6. Passing data deeply with context : context로 데이터 깊숙이 전달하기>
 /*
@@ -354,25 +354,51 @@ import Section from "./Section.jsx";
 
   따라서 context를 사용하기 전에 props를 전달하거나 JSX를 children으로 전달해보자.
 */
-export default function Page(){
-  return(
-    <Section>
-      <Heading>Title</Heading>
-      <Section>
-        <Heading>Heading</Heading>
-        <Heading>Heading</Heading>
-        <Heading>Heading</Heading>
-        <Section> 
-          <Heading>Sub-heading</Heading>
-          <Heading>Sub-heading</Heading>
-          <Heading>Sub-heading</Heading>
-          <Section>
-            <Heading>Sub-sub-heading</Heading>
-            <Heading>Sub-sub-heading</Heading>
-            <Heading>Sub-sub-heading</Heading>
-          </Section>
-        </Section>
-      </Section>
-    </Section>
+// export default function Page(){
+//   return(
+//     <Section>
+//       <Heading>Title</Heading>
+//       <Section>
+//         <Heading>Heading</Heading>
+//         <Heading>Heading</Heading>
+//         <Heading>Heading</Heading>
+//         <Section> 
+//           <Heading>Sub-heading</Heading>
+//           <Heading>Sub-heading</Heading>
+//           <Heading>Sub-heading</Heading>
+//           <Section>
+//             <Heading>Sub-sub-heading</Heading>
+//             <Heading>Sub-sub-heading</Heading>
+//             <Heading>Sub-sub-heading</Heading>
+//           </Section>
+//         </Section>
+//       </Section>
+//     </Section>
+//   );
+// }
+
+// -------------------------------------------------------------------------------
+import { useReducer } from "react";
+import AddTask2 from './AddTask2.jsx';
+import TaskList2 from './AddTask2.jsx';
+import { TasksProvider } from './TasksContext.jsx';
+
+// < 2-7. Scaling up with reducer and context : Reducer와 Context로 확장하기 >
+/*
+  * reducer를 사용하면 컴포넌트의 state 업데이트 로직을 통합할 수 있다.
+  * context를 사용하면 다른 컴포넌트에 정보를 깊숙이 전달할 수 있다. 
+  * reducer와 context를 함께 결합하여 복잡한 화면의 state를 관리할 수 있다.
+  
+  TasksContext는 현재 tasks 리스트를 제공
+  TasksDispatchContext는 컴포넌트에서 action을 dispatch 하는 함수를 제공
+*/
+export default function TaskApp() {
+
+  return (
+    <TasksProvider>
+      <h1>Day off in Kyoto</h1>
+      <AddTask2 />
+      <TaskList2 />
+    </TasksProvider>
   );
 }
