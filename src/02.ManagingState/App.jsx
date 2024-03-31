@@ -148,34 +148,75 @@ import "./App.css";
 
   아래 예제에서는 한 번에 하나의 패널만 활성화된다.
 */
-export default function Accordion(){
-  const [activeIndex, setActiceIndex] = useState(0);
-  return(
-    <>
-      <h2>Almaty, Kazakhstan</h2>
-      <Panel
-        title = "About"
-        isActive = {activeIndex === 0}
-        onShow = {() => setActiceIndex(0)}
-      >
-        With a population of about 2 million, Almaty is kazahstan's largest city. From 1929 to 1997, it was its capital city.
-      </Panel>
-      <Panel
-        title = "Etymology"
-        isActive = {activeIndex === 1}
-        onShow = {() => setActiceIndex(1)}
-      >
-        The name comes from <span lang="kk-KZ">алма</span>, the Kazakh word for "apple" and is often translated as "full of apples". In fact, the region surrounding Almaty is thought to be the ancestral home of the apple, and the wild <i lang="la">Malus sieversii</i> is considered a likely candidate for the ancestor of the modern domestic apple.
-      </Panel>
-    </>
-  );
+// export default function Accordion(){
+//   const [activeIndex, setActiceIndex] = useState(0);
+//   return(
+//     <>
+//       <h2>Almaty, Kazakhstan</h2>
+//       <Panel
+//         title = "About"
+//         isActive = {activeIndex === 0}
+//         onShow = {() => setActiceIndex(0)}
+//       >
+//         With a population of about 2 million, Almaty is kazahstan's largest city. From 1929 to 1997, it was its capital city.
+//       </Panel>
+//       <Panel
+//         title = "Etymology"
+//         isActive = {activeIndex === 1}
+//         onShow = {() => setActiceIndex(1)}
+//       >
+//         The name comes from <span lang="kk-KZ">алма</span>, the Kazakh word for "apple" and is often translated as "full of apples". In fact, the region surrounding Almaty is thought to be the ancestral home of the apple, and the wild <i lang="la">Malus sieversii</i> is considered a likely candidate for the ancestor of the modern domestic apple.
+//       </Panel>
+//     </>/   );
+// }
+
+// function Panel({title, children, isActive, onShow}){
+//   return(
+//     <section className="panel">
+//       <h3>{title}</h3>
+//       {isActive ? (<p>{children}</p>) : (<button onClick={onShow}>show</button>)}
+//     </section>
+//   );
+// }
+
+// -------------------------------------------------------------------------------
+import ContactList from "./ContactList.jsx";
+import Chat from "./Chat.jsx";
+
+// < 2-4. Preserving and resetting state : state 보존 및 재설정  >
+/*
+  기본적으로 React는 이전에 렌더링된 컴포넌트 트리와 “일치”하는 트리의 부분을 보존한다.
+
+  React를 사용하면 기본 동작을 재정의하고 컴포넌트에 다른 key를 전달하여 state를 강제로 초기화할 수 있다.
+
+  * 리렌더링 사이에 state를 유지하려면 트리의 구조가 “일치”해야 합니다. 구조가 다르면 React는 트리에서 컴포넌트를 제거할 때 state를 파괴한다.
+
+  전환할 때 state를 재설정하는 방법에는 두 가지가 있다.
+    1. 컴포넌트를 다른 위치에 렌더링하기
+      {isPlayerA && 
+        <Counter person="Taylor" />
+      }
+      {!isPlayerA && 
+        <Counter person="Sarah" />
+      }
+    2. 각 컴포넌트에 key로 명시적인 아이덴티티 부여하기
+*/
+export default function Messenger() {
+  const [to, setTo] = useState(contacts[0]);
+  return (
+    <div>
+      <ContactList
+        contacts={contacts}
+        selectedContact={to}
+        onSelect={contact => setTo(contact)}
+      />
+      <Chat key={to.id} contact={to} />
+    </div>
+  )
 }
 
-function Panel({title, children, isActive, onShow}){
-  return(
-    <section className="panel">
-      <h3>{title}</h3>
-      {isActive ? (<p>{children}</p>) : (<button onClick={onShow}>show</button>)}
-    </section>
-  );
-}
+const contacts = [
+  { id: 0, name: 'Taylor', email: 'taylor@mail.com' },
+  { id: 1, name: 'Alice', email: 'alice@mail.com' },
+  { id: 2, name: 'Bob', email: 'bob@mail.com' }
+];

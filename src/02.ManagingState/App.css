@@ -46,8 +46,20 @@ ul {
   padding-inline-start: 20px;
 }
 
-h3, p { margin: 5px 0px; }
-.panel {
+.chat, .contact-list {
+  float: left;
+  margin-bottom: 20px;
+}
+ul, li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+li button {
+  width: 100px;
   padding: 10px;
-  border: 1px solid #aaa;
+  margin-right: 10px;
+}
+textarea {
+  height: 150px;
 }
