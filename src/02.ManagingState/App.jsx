@@ -378,10 +378,10 @@ import "./App.css";
 // }
 
 // -------------------------------------------------------------------------------
-import { useReducer } from "react";
-import AddTask2 from './AddTask2.jsx';
-import TaskList2 from './AddTask2.jsx';
-import { TasksProvider } from './TasksContext.jsx';
+// import { useReducer } from "react";
+// import AddTask2 from './AddTask2.jsx';
+// import TaskList2 from './AddTask2.jsx';
+// import { TasksProvider } from './TasksContext.jsx';
 
 // < 2-7. Scaling up with reducer and context : Reducer와 Context로 확장하기 >
 /*
@@ -392,13 +392,149 @@ import { TasksProvider } from './TasksContext.jsx';
   TasksContext는 현재 tasks 리스트를 제공
   TasksDispatchContext는 컴포넌트에서 action을 dispatch 하는 함수를 제공
 */
-export default function TaskApp() {
+// export default function TaskApp() {
 
-  return (
-    <TasksProvider>
-      <h1>Day off in Kyoto</h1>
-      <AddTask2 />
-      <TaskList2 />
-    </TasksProvider>
+//   return (
+//     <TasksProvider>
+//       <h1>Day off in Kyoto</h1>
+//       <AddTask2 />
+//       <TaskList2 />
+//     </TasksProvider>
+//   );
+// }
+
+// -------------------------------------------------------------------------------
+import { useReducer } from "react";
+import Student from "./Student";
+// 📌useReducer 파헤치기
+/*
+  reducer - state를 업데이트 하는 역할 (은행)
+  dispatch - state 업데이트를 위한 요구
+  action - 요구의 내용
+
+  useReducer는 useState와 비슷하게 배열을 반환
+  첫번째 요소에는 새로 만들어진 state
+  두번째 요소에는 useReducer가 만들어준 dispatch 함수가 들어있다.
+
+  useReducer는 인자를 두가지를 받는다.
+  첫번째 인자는 reducer
+  두번째 인자는 state안에 들어갈 초기값이다.
+
+  reducer는 인자를 두가지를 받는다.
+  첫번째 인자는 현재의 state
+  두번째 인자는 action으로 reducer에게 state를 변경해달라고 요구하는 내용이 들어간다.
+
+  money state는 reducer를 통해서만 수정이 된다.
+  우리가 reducer를 통해서 money state를 수정하고 싶을 때 마다 dispatch를 불러준다.
+  dispatch를 부를 경우 reducer가 호출이 되는데 reducer의 인자인 action을 토대로 reducer는 state를 변경한다.
+  reducer가 return하는 값이 새로 update가 되는 state다.
+*/
+
+// 예제 1.
+
+// const ACTION_TYPE = {
+//   deposit : 'deposit' ,
+//   withdraw : 'withdraw' ,
+// }
+
+// const reducer = (state, action) => {
+//   console.log("reducer가 일을 합니다!",  state, action);
+//   // ..
+//   switch(action.type){
+//     case ACTION_TYPE.deposit : 
+//       return state + action.payload;
+//     case ACTION_TYPE.withdraw : 
+//       return state - action.payload;
+//     default : 
+//       return state;
+//   }
+// }
+
+// export default function App(){
+//   const [number, setNumber] = useState(0);
+//   const [money, dispatch] = useReducer(reducer, 0);
+
+//   return(
+//     <div>
+//       <h2>useReducer 은행에 오신것을 환영합니다.</h2>
+//       <p>잔고 : {money}원</p>
+//       <input 
+//         type="number"
+//         value={number}
+//         onChange={(e) => setNumber(parseInt(e.target.value))}
+//         step="1000"
+//       />
+//       <button onClick={() => {
+//         dispatch({type : ACTION_TYPE.deposit, payload : number})
+//       }}>예금</button>
+//       <button onClick={() => {
+//        dispatch({type : ACTION_TYPE.withdraw, payload : number}) 
+//       }}>출금</button>
+//     </div>
+//   );
+// }
+
+// 예제 2.
+
+const reducer = (state, action) => {
+  console.log("state : ", state, ", action : ", action);
+  switch(action.type){
+    case 'add-student' : 
+      const name = action.payload.name;
+      const newStudent = {
+        id : Date.now() ,
+        name , 
+        isHere : false ,
+      }
+      return {
+        count : state.count + 1 ,
+        students : [...state.students, newStudent] ,
+      }
+    case 'delete-student' :
+      return {
+        count : state.count - 1,
+        students : state.students.filter(student => student.id !== action.payload.id) ,
+      }
+    case 'mark-student':
+      return {
+        count : state.count , 
+        students : state.students.map(student => {
+          if(student.id === action.payload.id){
+            return {...student, isHere : !student.isHere}
+          }
+          return student;
+        })
+      }
+    default : 
+      return state;
+  }
+};
+
+const initialState = {
+  count : 0 ,
+  students : []
+}
+
+export default function App(){
+  const [name, setName] = useState('');
+  const [studentInfo, dispatch] = useReducer(reducer,initialState);
+
+  return(
+    <div>
+      <h1>출석부</h1>
+      <p>총 학생 수 : {studentInfo.count}</p>
+      <input 
+        type="text"
+        placeholder="이름을 입력해주세요"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <button onClick={() => {
+        dispatch({type : 'add-student', payload : {name}})
+      }}>추가</button>
+      {studentInfo.students.map(student => {
+        return <Student key={student.id} name={student.name} dispatch={dispatch} id={student.id} isHere={student.isHere}/>
+      })}
+    </div>
   );
 }
