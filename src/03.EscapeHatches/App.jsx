@@ -96,23 +96,60 @@ import "./App.css";
 // }
 
 // 예제4.
-export default function App(){
-  const inputRef = useRef();
+// export default function App(){
+//   const inputRef = useRef();
 
-  useEffect(() => {
-    // console.log(inputRef);
-    inputRef.current.focus();
-  }, []);
+//   useEffect(() => {
+//     // console.log(inputRef);
+//     inputRef.current.focus();
+//   }, []);
 
-  const login =  () => {
-    alert(`환영합니다 ${inputRef.current.value}님!`);
-    inputRef.current.focus();
+//   const login =  () => {
+//     alert(`환영합니다 ${inputRef.current.value}님!`);
+//     inputRef.current.focus();
+//   }
+
+//   return(
+//     <div>
+//       <input ref={inputRef} type="text" placeholder="username" /> 
+//       <button onClick={login}>로그인</button>
+//     </div>
+//   );
+// }
+
+export default function Stopwatch() {
+  const [startTime, setStartTime] = useState(null);
+  const [now, setNow] = useState(null);
+  const intervalRef = useRef(null);
+
+  function handleStart() {
+    setStartTime(Date.now());
+    setNow(Date.now());
+
+    clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setNow(Date.now());
+    }, 10);
   }
 
-  return(
-    <div>
-      <input ref={inputRef} type="text" placeholder="username" /> 
-      <button onClick={login}>로그인</button>
-    </div>
+  function handleStop() {
+    clearInterval(intervalRef.current);
+  }
+
+  let secondsPassed = 0;
+  if (startTime != null && now != null) {
+    secondsPassed = (now - startTime) / 1000;
+  }
+
+  return (
+    <>
+      <h1>Time passed: {secondsPassed.toFixed(3)}</h1>
+      <button onClick={handleStart}>
+        Start
+      </button>
+      <button onClick={handleStop}>
+        Stop
+      </button>
+    </>
   );
 }
