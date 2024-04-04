@@ -160,20 +160,82 @@ import "./App.css";
 /*
   부모노드가 자식노드의 DOM에 접근하고자 ref를 전달할 때는 일반적인 ref를 사용할 수 없고, forwardRef를 사용해야한다.
 */
-import MyInput from './MyInput.jsx';
+// import MyInput from './MyInput.jsx';
 
-export default function App(){
-	const inputRef = useRef();
+// export default function App(){
+// 	const inputRef = useRef();
 	
-	const focus = () => {
-		inputRef.current.focus();
-	};
+// 	const focus = () => {
+// 		inputRef.current.focus();
+// 	};
 	
-	return(
-		<div>
-			{/*<input ref={inputRef} />*/}
-			<MyInput ref={inputRef}/>
-			<button onClick={focus}>집중</button>
-		</div>
-	);
+// 	return(
+// 		<div>
+// 			{/*<input ref={inputRef} />*/}
+// 			<MyInput ref={inputRef}/>
+// 			<button onClick={focus}>집중</button>
+// 		</div>
+// 	);
+// }
+
+/*
+	다음과 같이 새 할 일을 추가하고 목록의 마지막 하위 항목까지 화면을 아래로 스크롤하는 코드를 작성했다.
+	그러나 마지막에 추가한 할 일이 아닌 바로 앞에 있던 할 일로 스크롤되는 것을 볼 수 있다.
+
+	* 이는 state가 비동기로 작동하기 때문에 setTodos([ ...todos, newTodo])가 있어도 바로 밑의 스크롤까지 진행 후 새로운 요소를 추가하기 떄문이다.
+
+	이때 flushsync 를 사용해서 문제를 해결할 수 있다.
+
+	정말 간단하게 말하면 async await으로 보면된다.
+
+	비동기적인 코드를 강제로 동기적으로 만들고 react에서 리렌더링을 강제하도록 한다.
+
+	단, 위와 같은 처리를 useEffect를 통해서도 할 수 있기 때문에 특별한 경우가 아니라면 useEffect를 사용하는 것이 좋다.
+*/
+
+import { flushSync } from "react-dom";
+
+export default function TodoList() {
+  const listRef = useRef(null);
+  const [text, setText] = useState('');
+  const [todos, setTodos] = useState(
+    initialTodos
+  );
+
+  function handleAdd() {
+    const newTodo = { id: nextId++, text: text };
+    setText('');
+    // setTodos([ ...todos, newTodo]);
+		flushSync(() => {setTodos([ ...todos, newTodo])});
+    listRef.current.lastChild.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest'
+    });
+  }
+
+  return (
+    <>
+      <button onClick={handleAdd}>
+        Add
+      </button>
+      <input
+        value={text}
+        onChange={e => setText(e.target.value)}
+      />
+      <ul ref={listRef}>
+        {todos.map(todo => (
+          <li key={todo.id}>{todo.text}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+let nextId = 0;
+let initialTodos = [];
+for (let i = 0; i < 20; i++) {
+  initialTodos.push({
+    id: nextId++,
+    text: 'Todo #' + (i + 1)
+  });
 }
