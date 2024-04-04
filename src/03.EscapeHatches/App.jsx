@@ -158,7 +158,7 @@ import "./App.css";
 
 // < 3-2. Manipulating the DOM with Refs : ref로 DOM 조작하기 >
 /*
-
+  부모노드가 자식노드의 DOM에 접근하고자 ref를 전달할 때는 일반적인 ref를 사용할 수 없고, forwardRef를 사용해야한다.
 */
 import MyInput from './MyInput.jsx';
 
